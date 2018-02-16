@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="104">
+    <server artifactsdir="artifacts" agentAutoRegisterKey="76845250-5f70-42eb-8b51-387033437529" webhookSecret="580b80e3-e648-49b6-bf2e-79a53846482e" commandRepositoryLocation="default" serverId="1a003120-6865-4917-902b-21fe2c00cfad" tokenGenerationKey="041ada4c-ee32-4e97-976b-dc524e7093bc" />
+    <pipelines group="defaultGroup">
+        <pipeline name="HelloCD">
+            <materials>
+                <git url="https://github.com/gocd-contrib/getting-started-repo" />
+            </materials>
+            <stage name="defaultStage">
+                <jobs>
+                    <job name="defaultJob">
+                        <tasks>
+                            <exec command="./build" />
+                        </tasks>
+                        <tabs>
+                            <tab name="Artiphuck" path="my-artifact.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact src="my-artifact.html" />
+                        </artifacts>
+                    </job>
+                </jobs>
+            </stage>
+        </pipeline>
+        <pipeline name="FooBar">
+            <materials>
+                <pipeline pipelineName="HelloCD" stageName="defaultStage" />
+            </materials>
+            <stage name="defaultStage">
+                <jobs>
+                    <job name="defaultJob">
+                        <tasks>
+                            <fetchartifact srcfile="my-artifact.html" pipeline="HelloCD" stage="defaultStage" job="defaultJob">
+                                <runif status="passed" />
+                            </fetchartifact>
+                            <exec command="cat">
+                                <arg>my-artifact.html</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                    </job>
+                </jobs>
+            </stage>
+        </pipeline>
+    </pipelines>
+    <agents>
+        <agent hostname="b58bfa79ec1d" ipaddress="172.19.0.2" uuid="9821e657-05d0-44e9-a511-1c8b8a1e7fa9" />
+    </agents>
+</cruise>

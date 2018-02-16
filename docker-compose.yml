@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  gocd_server:
+    image: gocd/gocd-server:v18.1.0
+    ports:
+      - "8153:8153"
+      - "8154:8154"
+    networks:
+      - backend
+  gocd_runner:
+    image: gocd/gocd-agent-alpine-3.5:v18.1.0
+    environment:
+      - GO_SERVER_URL=https://gocd_server:8154/go
+    networks:
+      - backend
+
+networks:
+        backend:
